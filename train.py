@@ -257,19 +257,18 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
                 )
             )
 
-            if wandb and args.wandb:
-                wandb.log(
-                    {
-                        'Generator': g_loss_val,
-                        'Discriminator': d_loss_val,
-                        'R1': r1_val,
-                        'Path Length Regularization': path_loss_val,
-                        'Mean Path Length': mean_path_length,
-                        'Real Score': real_score_val,
-                        'Fake Score': fake_score_val,
-                        'Path Length': path_length_val,
-                    }
-                )
+            wandb.log(
+                {
+                    'Generator': g_loss_val,
+                    'Discriminator': d_loss_val,
+                    'R1': r1_val,
+                    'Path Length Regularization': path_loss_val,
+                    'Mean Path Length': mean_path_length,
+                    'Real Score': real_score_val,
+                    'Fake Score': fake_score_val,
+                    'Path Length': path_length_val,
+                }
+            )
 
             if i % 100 == 0:
                 with torch.no_grad():
@@ -411,6 +410,6 @@ if __name__ == '__main__':
     )
 
     if get_rank() == 0 and wandb is not None and args.wandb:
-        wandb.init(project='stylegan 2')
+        wandb.init(project='texture_gan')
 
     train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, device)
