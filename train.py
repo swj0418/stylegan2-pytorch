@@ -282,7 +282,7 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
                         range=(-1, 1),
                     )
 
-            if i % 10000 == 0:
+            if i % 2000 == 0:
                 torch.save(
                     {
                         'g': g_module.state_dict(),
@@ -302,9 +302,9 @@ if __name__ == '__main__':
 
     parser.add_argument('path', type=str)
     parser.add_argument('--iter', type=int, default=800000)
-    parser.add_argument('--batch', type=int, default=16)
-    parser.add_argument('--n_sample', type=int, default=64)
-    parser.add_argument('--size', type=int, default=256)
+    parser.add_argument('--batch', type=int, default=4)
+    parser.add_argument('--n_sample', type=int, default=16)
+    parser.add_argument('--size', type=int, default=1024)
     parser.add_argument('--r1', type=float, default=10)
     parser.add_argument('--path_regularize', type=float, default=2)
     parser.add_argument('--path_batch_shrink', type=int, default=2)
