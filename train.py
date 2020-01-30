@@ -300,11 +300,11 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('path', type=str)
+    parser.add_argument('--path', type=str, default='./dataset')
     parser.add_argument('--iter', type=int, default=800000)
-    parser.add_argument('--batch', type=int, default=4)
+    parser.add_argument('--batch', type=int, default=2)
     parser.add_argument('--n_sample', type=int, default=16)
-    parser.add_argument('--size', type=int, default=1024)
+    parser.add_argument('--size', type=int, default=2048)
     parser.add_argument('--r1', type=float, default=10)
     parser.add_argument('--path_regularize', type=float, default=2)
     parser.add_argument('--path_batch_shrink', type=int, default=2)
@@ -313,7 +313,7 @@ if __name__ == '__main__':
     parser.add_argument('--mixing', type=float, default=0.9)
     parser.add_argument('--ckpt', type=str, default=None)
     parser.add_argument('--lr', type=float, default=0.002)
-    parser.add_argument('--channel_multiplier', type=int, default=2)
+    parser.add_argument('--channel_multiplier', type=int, default=1)
     parser.add_argument('--wandb', action='store_true')
     parser.add_argument('--local_rank', type=int, default=0)
 
@@ -327,8 +327,8 @@ if __name__ == '__main__':
         torch.distributed.init_process_group(backend='nccl', init_method='env://')
         synchronize()
 
-    args.latent = 512
-    args.n_mlp = 8
+    args.latent = 16
+    args.n_mlp = 2
 
     args.start_iter = 0
 
@@ -409,7 +409,7 @@ if __name__ == '__main__':
         drop_last=True,
     )
 
-    if get_rank() == 0 and wandb is not None and args.wandb:
-        wandb.init(project='texture_gan')
+    # if get_rank() == 0 and wandb is not None and args.wandb:
+    wandb.init(project='texture_gan')
 
     train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, device)

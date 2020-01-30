@@ -125,18 +125,18 @@ def generate_larger_overlaping_sample(args, g_ema, device):
 
             sample_z[0][10] = np.random.rand(1)[0]
 
-            # r_idx_1 = np.random.randint(0, 512)
-            r_idx_2 = np.random.randint(0, 512)
-            r_idx_3 = np.random.randint(0, 512)
-            r_idx_4 = np.random.randint(0, 512)
-            r_idx_5 = np.random.randint(0, 512)
-            r_idx_6 = np.random.randint(0, 512)
+            r_idx_1 = np.random.randint(0, 512)
+            # r_idx_2 = np.random.randint(0, 512)
+            # r_idx_3 = np.random.randint(0, 512)
+            # r_idx_4 = np.random.randint(0, 512)
+            # r_idx_5 = np.random.randint(0, 512)
+            # r_idx_6 = np.random.randint(0, 512)
             sample_z[0][55] = np.random.random(1)[0] * 1
-            sample_z[0][r_idx_2] = np.random.random(1)[0]
-            sample_z[0][r_idx_3] = np.random.random(1)[0]
-            sample_z[0][r_idx_4] = np.random.random(1)[0]
-            sample_z[0][r_idx_5] = np.random.random(1)[0]
-            sample_z[0][r_idx_6] = np.random.random(1)[0]
+            # sample_z[0][r_idx_2] = np.random.random(1)[0]
+            # sample_z[0][r_idx_3] = np.random.random(1)[0]
+            # sample_z[0][r_idx_4] = np.random.random(1)[0]
+            # sample_z[0][r_idx_5] = np.random.random(1)[0]
+            # sample_z[0][r_idx_6] = np.random.random(1)[0]
 
             sample, _ = g_ema([sample_z])
 
@@ -183,7 +183,7 @@ def list_styles(args, g_ema, device):
             print(i)
             torch.manual_seed(i)
             sample_z = torch.zeros(args.sample, args.latent, device=device)
-            sample_z[0][i] = 100
+            sample_z[0][i] = np.random.uniform(low=0.0, high=1.0)
             sample, _ = g_ema([sample_z])
 
             utils.save_image(
@@ -215,6 +215,8 @@ if __name__ == '__main__':
     g_ema = Generator(
         args.size, args.latent, args.n_mlp, channel_multiplier=args.channel_multiplier
     ).to(device)
+
+    args.ckpt = '/home/sangwon/Work/NeuralNetworks/StyleGan/weights/stylegan2-1024-mult2-r1-10-asphalt-large/060000.pt'
     checkpoint = torch.load(args.ckpt)
 
     g_ema.load_state_dict(checkpoint['g_ema'])
@@ -223,4 +225,4 @@ if __name__ == '__main__':
     generate_larger_overlaping_sample(args, g_ema, device)
     # generate_specified_samples(args, g_ema, device)
     # list_styles(args, g_ema, device)
-    # generate(args, g_ema, device)
+    generate(args, g_ema, device)

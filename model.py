@@ -279,7 +279,7 @@ class NoiseInjection(nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.weight = nn.Parameter(torch.zeros(1))
+        self.weight = nn.Parameter(torch.zeros(1), requires_grad=True)
 
     def forward(self, image, noise=None):
         if noise is None:
@@ -382,12 +382,13 @@ class Generator(nn.Module):
         for i in range(n_mlp):
             layers.append(
                 EqualLinear(
+                    # Image size, latent size, 8, _
                     style_dim, style_dim, lr_mul=lr_mlp, activation='fused_lrelu'
                 )
             )
 
         self.style = nn.Sequential(*layers)
-
+        '''
         self.channels = {
             4: 512,
             8: 512,
@@ -399,6 +400,20 @@ class Generator(nn.Module):
             512: 32 * channel_multiplier,
             1024: 16 * channel_multiplier,
         }
+        '''
+        self.channels = {
+            4: 128,
+            8: 128,
+            16: 128,
+            32: 128,
+            64: 64 * channel_multiplier,
+            128: 64 * channel_multiplier,
+            256: 64 * channel_multiplier,
+            512: 32 * channel_multiplier,
+            1024: 16 * channel_multiplier,
+            2048: 8 * channel_multiplier,
+            4096: 4 * channel_multiplier,
+        }
 
         self.input = ConstantInput(self.channels[4])
         self.conv1 = StyledConv(
@@ -406,8 +421,8 @@ class Generator(nn.Module):
         )
         self.to_rgb1 = ToRGB(self.channels[4], style_dim, upsample=False)
 
-        self.log_size = int(math.log(size, 2))
-        self.num_layers = (self.log_size - 2) * 2 + 1
+        self.log_size = int(math.log(size, 2)) # size 1024 ==> log size 10
+        self.num_layers = (self.log_size - 2) * 2 + 1 # size 1024 ==> num layers 17
 
         self.convs = nn.ModuleList()
         self.upsamples = nn.ModuleList()
@@ -614,7 +629,7 @@ class ResBlock(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, size, channel_multiplier=2, blur_kernel=[1, 3, 3, 1]):
         super().__init__()
-
+        '''
         channels = {
             4: 512,
             8: 512,
@@ -625,6 +640,20 @@ class Discriminator(nn.Module):
             256: 64 * channel_multiplier,
             512: 32 * channel_multiplier,
             1024: 16 * channel_multiplier,
+        }
+        '''
+        channels = {
+            4: 128,
+            8: 128,
+            16: 128,
+            32: 128,
+            64: 64 * channel_multiplier,
+            128: 64 * channel_multiplier,
+            256: 64 * channel_multiplier,
+            512: 32 * channel_multiplier,
+            1024: 16 * channel_multiplier,
+            2048: 8 * channel_multiplier,
+            4096: 4 * channel_multiplier,
         }
 
         convs = [ConvLayer(3, channels[size], 1)]
